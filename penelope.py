@@ -2342,10 +2342,11 @@ class Session:
 
 		elif self.OS == 'Windows':
 			response = self.exec("whoami", force_cmd=True, value=True)
-			if "\n" in response:
-				response = response.splitlines()[-1] # conptyshell
-			if '\x07' in response:
-				response = response.split('\x07')[-1] # conptyshell cmd
+			if response:
+				if "\n" in response:
+					response = response.splitlines()[-1] # conptyshell
+				if '\x07' in response:
+					response = response.split('\x07')[-1] # conptyshell cmd
 
 		return response or ''
 
@@ -4101,7 +4102,8 @@ class Session:
 			message = f"Invalid shell from {self.ip} {EMOJIS['invalid_shell']}"
 		else:
 			message = f"Session [{self.id}] died..."
-			core.hosts[self.name].remove(self)
+			if hasattr(self, 'name'):
+				core.hosts[self.name].remove(self)
 			if not core.hosts[self.name]:
 				message += f" We lost {self.name_colored} {EMOJIS['lost']}"
 				del core.hosts[self.name]
